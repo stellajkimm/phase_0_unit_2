@@ -1,14 +1,16 @@
 # U2.W5: Virus Predictor
 
-# I worked on this challenge [by myself, with: ].
+# I worked on this challenge [by myself].
 
 # EXPLANATION OF require_relative
-#
-#
-require_relative 'state_data'
+# this says that this ruby document needs to load the 'state_data' document
+# relative just means that it is in the same folder as this document.
+require_relative 'state_data' 
+                              
 
 class VirusPredictor
 
+  # initialize the class to values to the instance values
   def initialize(state_of_origin, population_density, population, region, regional_spread)
     @state = state_of_origin
     @population = population
@@ -17,50 +19,64 @@ class VirusPredictor
     @next_region = regional_spread
   end
 
-  def virus_effects  #HINT: What is the SCOPE of instance variables?
+  # returns the number of predicted deaths and speed of the spread by calling the other methods
+  def virus_effects  #HINT: What is the SCOPE of instance variables? their values are local to specific instances
+                     #of an object. 
     predicted_deaths(@population_density, @population, @state)
     speed_of_spread(@population_density, @state)
   end
 
   private  #what is this?  what happens if it were cut and pasted above the virus_effects method
+           # if it were put above virus_effects, a user wouldn't be able to call that method.
 
+  # takes in a population density, population, and state as parameters and returns the number of deaths
+  # predicted by using some equation.
   def predicted_deaths(population_density, population, state)
-    if @population_density >= 200
+    case @population_density
+    when 200..Float::INFINITY
       number_of_deaths = (@population * 0.4).floor
-    elsif @population_density >= 150
+    when 150..199.9999
       number_of_deaths = (@population * 0.3).floor
-    elsif @population_density >= 100
+    when 100..149.9999
       number_of_deaths = (@population * 0.2).floor
-    elsif @population_density >= 50
+    when 50..99.9999
       number_of_deaths = (@population * 0.1).floor
-    else 
+    else
       number_of_deaths = (@population * 0.05).floor
     end
 
     print "#{@state} will lose #{number_of_deaths} people in this outbreak"
-
   end
 
+  # returns the predicted speed of spread by taking in the population density and state and some formula
   def speed_of_spread(population_density, state) #in months
-    speed = 0.0
 
-    if @population_density >= 200
-      speed += 0.5
-    elsif @population_density >= 150
-      speed += 1
-    elsif @population_density >= 100
-      speed += 1.5
-    elsif @population_density >= 50
-      speed += 2
+    case @population_density
+    when 200..Float::INFINITY
+      speed = 0.5
+    when 150..199.9999
+      speed = 1
+    when 100..149.9999
+      speed = 1.5
+    when 50..99.9999
+      speed = 2
     else 
-      speed += 2.5
+      speed = 2.5
     end
 
     puts " and will spread across the state in #{speed} months.\n\n"
 
   end
-
 end
+
+def report_all(state_data)
+  state_data.each do |state, info|
+    each = VirusPredictor.new(state, info[:population_density], info[:population], info[:region], info[:regional_spread])
+    each.virus_effects
+  end
+end
+
+
 
 #=======================================================================
 
